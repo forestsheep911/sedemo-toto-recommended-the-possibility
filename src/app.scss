@@ -1,0 +1,205 @@
+@import '~compass-mixins/lib/compass/css3';
+
+/**
+ * Define variables
+ */
+$points: 10;
+$demo_w: 90%;
+$track_h: 4px;
+$track_h05: $track_h / 2;
+$gutter: 100% / ($points - 1);
+$duration: 0.3s;
+
+$_r: 24px;
+$_r05: $_r / 2;
+$_r025: $_r05 / 2;
+$_b: $_r / 6;
+$_mt: ($track_h - $_r) * 0.5 - $track_h;
+
+$tint-track: #ddd;
+$tint-progress: grey;
+$tint-complete: #777;
+$tint-incomplete: lighten($tint-complete, 20%);
+
+/**
+ * Style default tags
+ */
+*,
+*::before,
+*::after {
+  @include box-sizing(border-box);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-size: 14px;
+  text-align: left;
+}
+
+/**
+ * Utility styles
+ */
+.inliner {
+  height: 100%;
+}
+
+.inliner,
+.inliner + .inlined {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.inlined {
+  width: $demo_w;
+  text-align: center;
+}
+
+/**
+ * Component styles
+ */
+%progress-meter-demo {
+  margin: 20px auto 40px;
+  padding: 40px;
+}
+
+.progress-meter {
+  @extend %progress-meter-demo;
+  counter-reset: point;
+
+  %check {
+    @include transition;
+    @include border-radius($_r);
+    @include box-shadow(0 0 0 2px white);
+    display: block;
+    width: $_r;
+    margin: 0 auto $_r05;
+    color: #fff;
+    text-align: center;
+    background-color: #fff;
+    border: $_b solid $tint-incomplete;
+    content: '\2713';
+  }
+
+  .track {
+    position: relative;
+    height: $track_h;
+    background: $tint-track;
+  }
+
+  .progress {
+    @include transition(width 1s);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 0;
+    height: $track_h;
+    background: $tint-progress;
+  }
+
+  .progress-points {
+    position: relative;
+    margin: $_mt 0 0;
+    padding: 0;
+    list-style: none;
+
+    @for $i from 1 through $points {
+      .progress-point:nth-child(#{$i}) {
+        left: ($i - 1) * $gutter;
+      }
+    }
+  }
+
+  .progress-point {
+    $_w: 100px;
+    $_ml: $_w / -2;
+
+    @include transition(color $duration);
+    position: absolute;
+    display: block;
+    width: $_w;
+    margin-left: $_ml;
+    color: #999;
+    text-align: center;
+    cursor: pointer;
+
+    &::before {
+      @extend %check;
+    }
+
+    &.completed,
+    &.active {
+      color: $tint-complete;
+    }
+
+    &.completed::before {
+      background-color: $tint-complete;
+      border-color: $tint-complete;
+    }
+
+    &.active::before {
+      @include transition-delay($duration);
+      background-color: $tint-complete;
+      border-color: $tint-complete;
+    }
+
+    .label::before {
+      content: counter(point) '. '; /* Display the counter */
+      counter-increment: point;
+    }
+  }
+}
+
+/**
+ * Demo controls
+ */
+.controls {
+  font-size: 12px;
+  text-align: center;
+}
+
+.trigger {
+  $_tint-bg: #bbb;
+  $tint_text: darken($_tint-bg, 35%);
+  $_tint-shadow: lighten($_tint-bg, 25%);
+  padding: 6px 8px;
+  @include border-radius(3px);
+  color: $tint_text;
+  font: 14px inherit;
+  text-shadow: 0 1px 1px rgba($_tint-shadow, 0.75);
+  border: none;
+
+  @include background-image(linear-gradient($_tint-bg, darken($_tint-bg, 15%)));
+}
+
+.wk {
+  text-align: justify-all;
+}
+
+.baoyuan {
+  display: inline-block;
+  width: 58%;
+  color: white;
+  text-align: center;
+  background-color: firebrick;
+}
+
+.zhongli {
+  display: inline-block;
+  width: 19%;
+  color: black;
+  text-align: center;
+  background-color: lawngreen;
+}
+
+.tuijian {
+  display: inline-block;
+  width: 19%;
+  color: white;
+  text-align: center;
+  background-color: dodgerblue;
+}
