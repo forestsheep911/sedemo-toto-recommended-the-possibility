@@ -2,7 +2,8 @@
 import './app.scss'
 import $ from 'jquery'
 
-kintone.events.on('app.record.create.show', (event) => {
+kintone.events.on(['app.record.create.show', 'app.record.edit.show'], (event) => {
+  kintone.app.record.setFieldShown('field_code_tjd', false)
   const EleInsertRecommand = kintone.app.record.getSpaceElement('insert_space')
   console.log(EleInsertRecommand)
   EleInsertRecommand.innerHTML = `<div class="inliner"></div>
@@ -17,99 +18,81 @@ kintone.events.on('app.record.create.show', (event) => {
       <div class="track">
         <span class="progress"></span>
       </div>
-      <ol class="progress-points" data-current="4">
+      <ol class="progress-points" data-current="1">
         <li class="progress-point">
           <span class="label"></span>
         </li>
         <li class="progress-point">
-          <span class="label">Aliquam tincidunt</span>
+          <span class="label"></span>
         </li>
         <li class="progress-point">
-          <span class="label">Vestibulum auctor</span>
+          <span class="label"></span>
         </li>
         <li class="progress-point">
-          <span class="label">Lorem ipsum</span>
+          <span class="label"></span>
         </li>
         <li class="progress-point">
-          <span class="label">Aliquam tincidunt</span>
+          <span class="label"></span>
         </li>
         <li class="progress-point">
-          <span class="label">Aliquam tincidunt</span>
+          <span class="label"></span>
         </li>
         <li class="progress-point">
-          <span class="label">Aliquam tincidunt</span>
+          <span class="label"></span>
         </li>
         <li class="progress-point">
-          <span class="label">Aliquam tincidunt</span>
+          <span class="label"></span>
         </li>
         <li class="progress-point">
-          <span class="label">Aliquam tincidunt</span>
+          <span class="label"></span>
         </li>
         <li class="progress-point">
-          <span class="label">Aliquam tincidunt</span>
+          <span class="label"></span>
         </li>
       </ol>
     </div>
     <!-- End component -->
     <!-- Demo only -->
-    <div class="controls">
-      <button class="trigger">Toggle progress</button>
-      <p>Click any point to navigate to it directly</p>
-    </div>
   </div>
   `
-  let $point_arr
-  let $points
-  let $progress
-  let $trigger
+  const $pointArr = $('.progress-point')
+  const $progress = $('.progress').first()
+  const max = $pointArr.length - 1
+  const $points = $('.progress-points').first()
+  const val = +$points.data('current') - 1
+
   let active
-  let max
   let tracker
-  let val
 
-  $trigger = $('.trigger').first()
-  $points = $('.progress-points').first()
-  $point_arr = $('.progress-point')
-  $progress = $('.progress').first()
-
-  val = +$points.data('current') - 1
-  max = $point_arr.length - 1
-  tracker = active = 0
+  tracker = 0
+  active = 0
 
   function activate(index) {
     if (index !== active) {
       active = index
-      const $_active = $point_arr.eq(active)
-
-      $point_arr.removeClass('completed active').slice(0, active).addClass('completed')
-
-      $_active.addClass('active')
-
+      const $activeEle = $pointArr.eq(active)
+      $pointArr.removeClass('completed active').slice(0, active).addClass('completed')
+      $activeEle.addClass('active')
       return $progress.css('width', `${(index / max) * 100}%`)
     }
+    return $progress
   }
 
-  $points.on('click', 'li', function (eventi) {
-    let _index
-    _index = $point_arr.index(this)
-    tracker = _index === 0 ? 1 : _index === val ? 0 : tracker
-    console.log(_index)
-    event.record.field_code_tjd.value = _index + 1
-    console.log(event.record.field_code_tjd.value)
-    return activate(_index)
+  $points.on('click', 'li', function pf() {
+    const indexNum = $pointArr.index(this)
+    const zjpd = indexNum === val ? 0 : tracker
+    tracker = indexNum === 0 ? 1 : zjpd
+    console.log(event.record.field_code_tjd)
+    const record0 = kintone.app.record.get()
+    record0.record.field_code_tjd.value = indexNum + 1
+    kintone.app.record.set(record0)
+    return activate(indexNum)
   })
 
-  $trigger.on('click', function () {
-    return activate(tracker++ % 2 === 0 ? 0 : val)
-  })
-
-  setTimeout(function () {
-    return activate(val)
+  setTimeout(function st() {
+    const thisRecord = kintone.app.record.get()
+    return activate(thisRecord.record.field_code_tjd.value - 1)
   }, 1000)
 
-  return event
-})
-
-kintone.events.on('app.record.create.submit', (event) => {
   return event
 })

@@ -8,7 +8,8 @@
     "lint-eslint": "eslint --fix -c .eslintrc.js --ext .js src",
     "lint-stylelint": "stylelint --config .stylelintrc.js src/**/*.{css,scss}",
     "start": "cross-env NODE_ENV=development webpack serve --config ./config/webpack.dev.js",
-    "build": "cross-env NODE_ENV=production webpack --config ./config/webpack.prod.js"
+    "build": "cross-env NODE_ENV=production webpack --config ./config/webpack.prod.js",
+    "build1": "cross-env NODE_ENV=production webpack --config ./config/webpack.allinone.js"
   },
   "keywords": [
     "kintone"

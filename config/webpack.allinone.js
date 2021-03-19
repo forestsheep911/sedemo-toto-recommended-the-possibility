@@ -1,13 +1,15 @@
 const { resolve } = require('path')
-const isDev = process.env.NODE_ENV !== 'production'
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
 const cssLoaders = (preNumber) => [
-  isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
+  'style-loader',
   {
     loader: 'css-loader',
     options: {
-      sourceMap: isDev,
+      sourceMap: false,
       importLoaders: preNumber + 1,
     },
   },
@@ -29,24 +31,50 @@ const cssLoaders = (preNumber) => [
           'postcss-normalize',
         ],
       },
-      sourceMap: isDev,
+      sourceMap: false,
     },
   },
 ]
 
 module.exports = {
-  target: isDev ? 'web' : 'browserslist',
+  target: 'browserslist',
   entry: {
     app: resolve(__dirname, '../src/index.js'),
   },
   output: {
-    filename: `js/[name]${isDev ? '' : '.[contenthash:8]'}.js`,
+    filename: `js/[name].js`,
     path: resolve(__dirname, '../dist'),
   },
   resolve: {
     extensions: ['.js', '.json'],
   },
-  plugins: [],
+  plugins: [
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].css',
+      chunkFilename: 'css/[name].[contenthash:8].css',
+    }),
+  ],
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+        terserOptions: {
+          compress: { pure_funcs: ['console.log'] },
+        },
+      }),
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          preset: [
+            'default',
+            {
+              discardComments: { removeAll: true },
+            },
+          ],
+        },
+      }),
+    ],
+  },
   module: {
     rules: [
       {
@@ -66,7 +94,7 @@ module.exports = {
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: isDev,
+              sourceMap: false,
             },
           },
         ],
