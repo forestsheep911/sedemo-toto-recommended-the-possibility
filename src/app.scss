@@ -30,16 +30,6 @@ $tint-incomplete: lighten($tint-complete, 20%);
   @include box-sizing(border-box);
 }
 
-html,
-body {
-  height: 100%;
-}
-
-body {
-  font-size: 14px;
-  text-align: left;
-}
-
 /**
  * Utility styles
  */
@@ -148,7 +138,7 @@ body {
     }
 
     .label::before {
-      content: counter(point) '. '; /* Display the counter */
+      content: counter(point) ' '; /* Display the counter */
       counter-increment: point;
     }
   }
