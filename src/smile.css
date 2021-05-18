@@ -1,0 +1,13 @@
+.outter {
+  line-height: 0;
+}
+
+.icon-border {
+  display: inline-block;
+  margin-left: 2%;
+  vertical-align: center;
+}
+
+.selected {
+  outline: solid 3px rgb(39, 120, 196);
+}
