@@ -33,6 +33,7 @@ const htmlSmile = `
 </div>`
 const htmlRecommend = `
 <div class='outter'>
+  <div id="select-tip">最不推荐</div>
   <div class="number-border" value=0>
     <div>0</div>
   </div>
@@ -66,6 +67,7 @@ const htmlRecommend = `
   <div class="number-border" value=10>
     <div>10</div>
   </div>
+  <div id="select-tip">最推荐</div>
 </div>
 `
 
@@ -79,6 +81,7 @@ kintone.events.on(['app.record.detail.show'], (event) => {
   }
   kintone.app.record.setFieldShown('fd_smile', false)
   kintone.app.record.setFieldShown('fd_recommend', false)
+  kintone.app.record.setFieldShown('fd_reason', false)
   const eleKara = kintone.app.record.getSpaceElement('kara')
   const eleBtn = document.createElement('button')
   eleBtn.innerText = '开始评价'
@@ -174,14 +177,30 @@ kintone.events.on(['app.record.detail.show'], (event) => {
           },
         }).then((result0) => {
           if (result0.isConfirmed) {
-            // console.log(recordParm)
-            kintone.api(kintone.api.url('/k/v1/record', true), 'PUT', recordParm).then(
-              function rp() {
-                eleBtn.disabled = true
-                eleBtn.innerText = '已评价'
-              },
-              function er() {},
-            )
+            Swal.fire({
+              icon: 'question',
+              title: '請寫下您的評分理由',
+              input: 'textarea',
+              width: '80%',
+              confirmButtonText: '提交',
+              didOpen: () => {},
+            }).then((result1) => {
+              console.log(result1)
+              if (result1.isConfirmed) {
+                recordParm.record.fd_reason = {
+                  value: result1.value,
+                }
+                console.log(recordParm)
+                kintone.api(kintone.api.url('/k/v1/record', true), 'PUT', recordParm).then(
+                  function rp(resp) {
+                    console.log(resp)
+                    eleBtn.disabled = true
+                    eleBtn.innerText = '已评价'
+                  },
+                  function er() {},
+                )
+              }
+            })
           }
         })
       }
