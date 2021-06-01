@@ -214,5 +214,6 @@ kintone.events.on(['app.record.create.show', 'app.record.edit.show'], (event) =>
   const { record } = event
   record.fd_recommend.disabled = true
   record.fd_smile.disabled = true
+  record.fd_reason.disabled = true
   return event
 })
